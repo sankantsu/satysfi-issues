@@ -1,0 +1,19 @@
+let text-width = 440pt
+let text-height = 630pt
+let-inline ctx \math m = embed-math ctx m
+let ctx = get-initial-context text-width (command \math)
+
+let bb-main =
+  let ib = read-inline ctx {some text} in
+  line-break true true ctx (ib ++ inline-fil)
+
+let bb = bb-main +++ (block-skip 1pt) +++ clear-page +++ clear-page
+
+in
+
+page-break 
+  A4Paper
+  (fun _ -> (| text-height = 630pt; text-origin = (0pt,0pt) |))
+  (fun _ -> (| header-content = block-nil; header-origin = (0pt,0pt);
+               footer-content = block-nil; footer-origin = (0pt,0pt); |))
+  bb

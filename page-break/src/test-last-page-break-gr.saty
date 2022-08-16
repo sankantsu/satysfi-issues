@@ -1,0 +1,40 @@
+@require: gr
+@require: color
+@require: list
+
+let num-char = 45
+
+let char-size = 10pt
+let text-width = char-size *' 10.
+let-inline ctx \math m = embed-math ctx m
+let ctx = get-initial-context text-width (command \math)
+            |> set-leading 0pt
+            |> set-min-gap-of-lines 0pt
+
+% pseudo-character ((w,h,d) = (char-size,char-size,0pt))
+let gr-char =
+  let thickness = 0.2pt in
+  let draw = stroke thickness Color.black in
+  let gr (x,y) = [
+    draw (Gr.rectangle (x,y) (x +' char-size, y +' char-size));
+    draw (Gr.line (x,y) (x +' char-size, y +' char-size));]
+  in
+  inline-graphics char-size char-size 0pt gr
+
+let dscr = discretionary 0 inline-nil inline-nil inline-nil
+let ib-unit = gr-char ++ dscr % can break after each character
+
+let-rec repeat n x =
+  if n == 0 then inline-nil else x ++ repeat (n - 1) x
+
+let ib = repeat num-char ib-unit
+let bb = line-break true true ctx (ib ++ inline-fil)
+
+in
+
+page-break 
+  (UserDefinedPaper (text-width,char-size *' 2. +' 1pt))
+  (fun _ -> (| text-height = (char-size *' 2.); text-origin = (0pt,0pt) |))
+  (fun _ -> (| header-content = block-nil; header-origin = (0pt,0pt);
+               footer-content = block-nil; footer-origin = (0pt,0pt); |) )
+  bb

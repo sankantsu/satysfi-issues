@@ -1,0 +1,28 @@
+@require: stdjareport
+
+let-block ctx +vhook = hook-page-break-block (fun _ _ -> ())
+
+in
+
+document (|
+  title = {Test of vertical spacing around hook-page-break-block};
+  author = {sankantsu};
+|) '<
+  +chapter {No hook} <
+    +p {
+      First paragraph
+    }
+    +p {
+      Second paragraph
+    }
+  >
+  +chapter {Insert vhook} <
+    +p {
+      First paragraph
+    }
+    +vhook;
+    +p {
+      Second paragraph
+    }
+  >
+>
